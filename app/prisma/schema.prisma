@@ -1,0 +1,56 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  comp_id          Int               @id @default(autoincrement())
+  name             String            @db.VarChar(255)
+  user_id          Int               @unique
+  street           String            @db.VarChar(255)
+  zip_code         String            @db.Char(8)
+  city             String            @db.VarChar(255)
+  phone_number     String            @db.Char(9)
+  email            String            @db.VarChar(255)
+  date_created     DateTime          @default(now()) @db.Timestamptz(6)
+  date_updated     DateTime?         @db.Timestamptz(6)
+  date_deleted     DateTime?         @db.Timestamptz(6)
+  is_deleted       Boolean           @default(false)
+  physiotherapists Physiotherapist[]
+}
+
+model Physiotherapist {
+  physio_id    Int       @id @default(autoincrement())
+  name         String    @db.VarChar(255)
+  user_id      Int       @unique
+  company_id   Int
+  phone        String    @db.Char(9)
+  email        String    @db.VarChar(255)
+  date_created DateTime  @default(now()) @db.Timestamptz(6)
+  date_updated DateTime? @db.Timestamptz(6)
+  date_deleted DateTime? @db.Timestamptz(6)
+  is_deleted   Boolean   @default(false)
+  patients     Pacient[]
+  company      Company   @relation(fields: [company_id], references: [comp_id])
+}
+
+model Pacient {
+  id_pacient      Int             @id @default(autoincrement())
+  user_id         Int
+  name            String          @db.VarChar(255)
+  nif             Int
+  email           String          @db.VarChar(255)
+  age             Int
+  id_physio       Int
+  phone_numb      Int
+  date_created    DateTime        @default(now()) @db.Timestamptz(6)
+  date_updated    DateTime?       @db.Timestamptz(6)
+  date_deleted    DateTime?       @db.Timestamptz(6)
+  is_deleted      Boolean         @default(false)
+  physiotherapist Physiotherapist @relation(fields: [id_physio], references: [physio_id])
+}

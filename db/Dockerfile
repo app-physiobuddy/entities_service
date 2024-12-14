@@ -1,0 +1,5 @@
+FROM postgres
+
+ENV PGPORT=${PGPORT}
+
+EXPOSE ${PGPORT}
